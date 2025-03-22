@@ -1,0 +1,39 @@
+---
+const year = new Date().getFullYear()
+---
+
+<div>
+	<main>
+		<section>
+            <div id="container">
+                <div id="box1">
+                    <h5 id="name"> SPENGY </h5>
+                </div>
+                <div id="box2">
+                    <p> © {year} </p>
+                </div>
+            </div>
+		</section>
+	</main>
+</div>
+
+<style>
+    #container {
+        display: inline-block;
+        width: 100%;
+    }
+    #box1 {
+        display: inline-block;
+        float: left;
+    }
+    #box2 {
+        display: inline-block;
+        float: right;
+		margin-bottom: 25px;
+        margin-right: 25px;
+    }
+    #name {
+        margin-bottom: 25px;
+        margin-left: 25px;
+    }
+</style>

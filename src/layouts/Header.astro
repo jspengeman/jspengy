@@ -1,0 +1,45 @@
+---
+import github from "../assets/github.svg"
+---
+
+<div>
+	<main>
+		<section>
+            <div id="container">
+                <div id="box1">
+                    <h3 id="name"> SPENGY </h3>
+                </div>
+                <div id="box2">
+                    <a href="https://github.com/jspengeman/spengy"> 
+                        <img id="github" src={github.src} /> 
+                    </a>
+                </div>
+            </div>
+		</section>
+	</main>
+</div>
+
+<style>
+    #container {
+        display: inline-block;
+        width: 100%;
+    }
+    #box1 {
+        display: inline-block;
+        float: left;
+    }
+    #box2 {
+        display: inline-block;
+        float: right;
+    }
+    #name {
+        margin-top: 25px;
+        margin-left: 25px;
+    }
+    #github {
+        margin-top: 25px;
+        margin-right: 25px;
+        height: 25px;
+        width: 25px;
+    }
+</style>
