@@ -1,0 +1,23 @@
+---
+import { Picture } from 'astro:assets';
+import { getAllImages } from "../utils/gallery";
+
+const images = await getAllImages();
+---
+
+<div class="my-8 mb-16 mx-8">
+  <div class="mx-auto container sm:columns-1 md:columns-2 lg:columns-3 xl:columns-3">
+    {images.map((image) => (
+      <Picture
+        src={image}
+        alt="Sorry, I will work on getting alt text implemented. One step at a time."
+        format="avif"
+        inferSize={true}
+        quality={50}
+        class="rounded-sm pb-4 border border-transparent"
+        decoding="async"
+        loading="lazy"
+      />
+    ))}
+  </div>
+</div>
