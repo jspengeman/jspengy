@@ -15,6 +15,6 @@ export default defineConfig({
 
   image: {
     // TODO: THIS IS JUST FOR TESTING IMAGES.
-    domains: ['https://images.pexels.com'],
+    domains: ['images.pexels.com'],
   },
 });
