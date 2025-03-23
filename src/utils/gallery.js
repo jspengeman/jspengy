@@ -1,12 +1,30 @@
+const IMAGE_KIT_URL = "https://ik.imagekit.io/pmbw7zrkob"
+
+const getImageUrl = (filePath) => {
+    return `${IMAGE_KIT_URL}${filePath}`
+}
+
 export const getAllImages = async () => {
-    return [
-        "https://images.pexels.com/photos/7179373/pexels-photo-7179373.jpeg",
-        "https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg",
-        "https://images.pexels.com/photos/4584855/pexels-photo-4584855.jpeg",
-        "https://images.pexels.com/photos/14721103/pexels-photo-14721103.jpeg",
-        "https://images.pexels.com/photos/11399825/pexels-photo-11399825.jpeg",
-        "https://images.pexels.com/photos/14660912/pexels-photo-14660912.jpeg",
-        "https://images.pexels.com/photos/1438649/pexels-photo-1438649.jpeg",
-        "https://images.pexels.com/photos/16918021/pexels-photo-16918021/free-photo-of-cat-portrait-in-black-and-white.jpeg",
-    ]
+    const token = import.meta.env.IMAGE_KIT_KEY;
+
+    const headers = { 
+        "Accept": "application/json",
+        "Authorization": `Basic ${btoa(token)}`
+    };
+    const query = "fileType=image&sort=ASC_CREATED";
+    const response = await fetch(`https://api.imagekit.io/v1/files?${query}`, { 
+        method: 'GET',
+        headers: headers 
+    });
+
+    if (!response.ok) {
+        console.log("ImageKit response:", response)
+        throw new Error("Failed to search ImageKit. Failing build.")
+    }
+
+    const json = await response.json();
+
+    return json
+        .map(fileResult => fileResult.filePath)
+        .map(getImageUrl);
 }
