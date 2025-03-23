@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://spengy.com/sitemap-index.xml
