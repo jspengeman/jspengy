@@ -26,18 +26,47 @@ const { currPicture, prevPicture, nextPicture } = Astro.props;
     const prevButtton = document.getElementById("prev-button");
     const nextButton = document.getElementById("next-button");
 
+    const handlePrevAction = () => {
+        const prevPicture = prevButtton?.dataset.prevPicture;
+        if (prevPicture) {
+            window.location.replace(`/gallery/${prevPicture}`);
+        }
+    }
+
+    const handleNextAction = () => {
+        const nextPicture = nextButton?.dataset.nextPicture;
+        if (nextPicture) {
+            window.location.replace(`/gallery/${nextPicture}`);
+        }
+    }
+
     document.addEventListener("keydown", (event) => {
         if (event.key === "ArrowLeft") {
-            const prevPicture = prevButtton?.dataset.prevPicture;
-            if (prevPicture) {
-                window.location.replace(`/gallery/${prevPicture}`);
-            }
+            handlePrevAction();
         } else if (event.key === "ArrowRight") {
-            const nextPicture = nextButton?.dataset.nextPicture;
-            console.log(nextPicture)
-            if (nextPicture) {
-                window.location.replace(`/gallery/${nextPicture}`);
-            }
+            handleNextAction();
         }
     });
+
+    let touchstartX = 0, touchstartY = 0, touchendX = 0, touchendY = 0;
+    document.addEventListener('touchstart', (event) => {
+        touchstartX = event.changedTouches[0].screenX;
+        touchstartY = event.changedTouches[0].screenY;
+    }, false);
+
+    document.addEventListener('touchend', (event) => {
+        touchendX = event.changedTouches[0].screenX;
+        touchendY = event.changedTouches[0].screenY;
+        handleGesture();
+    }, false);
+
+    const handleGesture = () => {
+        if (touchendX < touchstartX) {
+            handlePrevAction();
+        }
+
+        if (touchendX > touchstartX) {
+            handleNextAction();
+        }
+    }
 </script>
