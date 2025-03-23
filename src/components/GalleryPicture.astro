@@ -60,13 +60,16 @@ const { currPicture, prevPicture, nextPicture } = Astro.props;
         handleGesture();
     }, false);
 
+    // TODO: This needs a little love it doesn't feel intuitive as a user to know that you can gesture here.
     const handleGesture = () => {
+        // LEFT SWIPE
         if (touchendX < touchstartX) {
-            handlePrevAction();
+            handleNextAction();
         }
 
+        // RIGHT SWIPE
         if (touchendX > touchstartX) {
-            handleNextAction();
+            handlePrevAction();
         }
     }
 </script>
