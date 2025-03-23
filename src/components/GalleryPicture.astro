@@ -6,9 +6,9 @@ const { currPicture, prevPicture, nextPicture } = Astro.props;
 
 <div class="my-8 mb-16">
     <div class="flex justify-center mb-2">
-        {prevPicture && <a href={`/gallery/${prevPicture}`} class="px-3">PREV</a>}
+        {prevPicture && <a id="prev-button" data-prev-picture={prevPicture} href={`/gallery/${prevPicture}`} class="mx-3 px-1 border-1 border-solid rounded-md"> ← </a>}
         {(nextPicture && prevPicture) && <span>|</span>}
-        {nextPicture && <a href={`/gallery/${nextPicture}`} class="px-3">NEXT</a>}
+        {nextPicture && <a id="next-button" data-next-picture={nextPicture} href={`/gallery/${nextPicture}`} class="mx-3 px-1 border-1 border-solid rounded-md"> → </a>}
     </div>
     <Picture
         src={getImageUrl("/" + currPicture)}
@@ -21,3 +21,23 @@ const { currPicture, prevPicture, nextPicture } = Astro.props;
         loading="eager"
     />
 </div>
+
+<script>
+    const prevButtton = document.getElementById("prev-button");
+    const nextButton = document.getElementById("next-button");
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowLeft") {
+            const prevPicture = prevButtton?.dataset.prevPicture;
+            if (prevPicture) {
+                window.location.replace(`/gallery/${prevPicture}`);
+            }
+        } else if (event.key === "ArrowRight") {
+            const nextPicture = nextButton?.dataset.nextPicture;
+            console.log(nextPicture)
+            if (nextPicture) {
+                window.location.replace(`/gallery/${nextPicture}`);
+            }
+        }
+    });
+</script>
