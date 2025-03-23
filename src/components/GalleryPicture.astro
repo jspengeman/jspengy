@@ -5,6 +5,11 @@ const { currPicture, prevPicture, nextPicture } = Astro.props;
 ---
 
 <div class="my-8 mb-16">
+    <div class="flex justify-center mb-2">
+        {prevPicture && <a href={`/gallery/${prevPicture}`} class="px-3">PREV</a>}
+        {(nextPicture && prevPicture) && <span>|</span>}
+        {nextPicture && <a href={`/gallery/${nextPicture}`} class="px-3">NEXT</a>}
+    </div>
     <Picture
         src={getImageUrl("/" + currPicture)}
         alt="Sorry, I will work on getting alt text implemented. One step at a time."
