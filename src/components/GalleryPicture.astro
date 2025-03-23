@@ -1,0 +1,18 @@
+---
+import { Picture } from 'astro:assets';
+import { getImageUrl } from "../utils/gallery"
+const { currPicture, prevPicture, nextPicture } = Astro.props;
+---
+
+<div class="my-8 mb-16">
+    <Picture
+        src={getImageUrl("/" + currPicture)}
+        alt="Sorry, I will work on getting alt text implemented. One step at a time."
+        format="avif"
+        inferSize={true}
+        quality={75}
+        class="rounded-sm pb-4 border border-transparent"
+        decoding="async"
+        loading="eager"
+    />
+</div>

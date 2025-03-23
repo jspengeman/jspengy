@@ -2,23 +2,25 @@
 import { Picture } from 'astro:assets';
 import { getAllImages } from "../utils/gallery";
 
-const images: string[] = await getAllImages();
+const images = await getAllImages();
 ---
 
 <!-- TODO: Our loading stratergy for above the fold should be eager and below should be lazy I am thinking -->
 <div class="my-8 mb-16">
   <div class="sm:columns-1 md:columns-2 lg:columns-3 xl:columns-3">
     {images.map((image) => (
-      <Picture
-        src={image}
-        alt="Sorry, I will work on getting alt text implemented. One step at a time."
-        format="avif"
-        inferSize={true}
-        quality={25}
-        class="rounded-sm pb-4 border border-transparent"
-        decoding="async"
-        loading="eager"
-      />
+      <a href={`/gallery/${image.fileName}`}>
+        <Picture
+          src={image.src}
+          alt="Sorry, I will work on getting alt text implemented. One step at a time."
+          format="avif"
+          inferSize={true}
+          quality={25}
+          class="rounded-sm pb-4 border border-transparent"
+          decoding="async"
+          loading="eager"
+        />
+      </a>
     ))}
   </div>
 </div>

@@ -1,8 +1,15 @@
 const IMAGE_KIT_URL = "https://ik.imagekit.io/pmbw7zrkob"
 
-const getImageUrl = (filePath) => {
+export const getImageUrl = (filePath) => {
     return `${IMAGE_KIT_URL}${filePath}`
 }
+
+const newImageModel = (currResult, prevResult, nextResult) => ({
+    src: getImageUrl(currResult.filePath),
+    fileName: currResult.name,
+    prevFileName: prevResult?.name,
+    nextFileName: nextResult?.name
+})
 
 export const getAllImages = async () => {
     const token = import.meta.env.IMAGE_KIT_KEY;
@@ -24,7 +31,16 @@ export const getAllImages = async () => {
 
     const json = await response.json();
 
-    return json
-        .map(fileResult => fileResult.filePath)
-        .map(getImageUrl);
+    const results = [];
+    for (let i = 0; i < json.length; i++) {
+        const prev = i - 1;
+        const next = i + 1;
+        const currResult = newImageModel(
+            json[i], 
+            prev in json ? json[prev] : null, 
+            next in json ? json[next] : null)
+        results.push(currResult)
+    }
+
+    return results;
 }
