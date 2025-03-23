@@ -2,7 +2,7 @@
 import { Picture } from 'astro:assets';
 import { getAllImages } from "../utils/gallery";
 
-const images = await getAllImages();
+const images: string[] = await getAllImages();
 ---
 
 <div class="my-8 mb-16">
