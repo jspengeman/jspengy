@@ -14,7 +14,6 @@ export default defineConfig({
   adapter: netlify(),
 
   image: {
-    // TODO: THIS IS JUST FOR TESTING IMAGES.
-    domains: ['images.pexels.com'],
+    domains: ['ik.imagekit.io'],
   },
 });
