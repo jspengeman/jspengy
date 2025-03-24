@@ -4,7 +4,7 @@ import { getImageUrl } from "../utils/gallery"
 const { currPicture, prevPicture, nextPicture } = Astro.props;
 ---
 
-<div class="my-8 mb-16">
+<div class="my-4 mb-8">
     <div class="flex justify-center mb-2">
         {prevPicture && <a id="prev-button" data-prev-picture={prevPicture} href={`/gallery/${prevPicture}`} class="mx-3 px-1 border-1 border-solid rounded-md"> ← </a>}
         {(nextPicture && prevPicture) && <span>|</span>}
@@ -16,7 +16,7 @@ const { currPicture, prevPicture, nextPicture } = Astro.props;
         format="avif"
         inferSize={true}
         quality={75}
-        class="rounded-sm pb-4 border border-transparent"
+        class="rounded-sm border border-transparent"
         decoding="async"
         loading="eager"
     />

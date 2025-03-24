@@ -6,7 +6,8 @@ const images = await getAllImages();
 ---
 
 <!-- TODO: Our loading stratergy for above the fold should be eager and below should be lazy I am thinking -->
-<div class="my-8 mb-16">
+<!-- TODO: I was using pb-4 but that messed up the border. mb-4 caused a layout issue. Going with that for now though. -->
+<div class="my-2 mb-8">
   <div class="sm:columns-1 md:columns-2 lg:columns-3 xl:columns-3">
     {images.map((image) => (
       <a href={`/gallery/${image.fileName}`}>
@@ -16,7 +17,7 @@ const images = await getAllImages();
           format="avif"
           inferSize={true}
           quality={10}
-          class="rounded-sm pb-4 border border-transparent"
+          class="rounded-sm mb-4 border border-transparent"
           decoding="async"
           loading="eager"
         />
