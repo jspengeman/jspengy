@@ -2,20 +2,24 @@
 import { Picture } from 'astro:assets';
 import { getImageUrl } from "../utils/gallery"
 const { currPicture, prevPicture, nextPicture } = Astro.props;
+
+// TODO: I'd like to slide left and right on left and right arrow and then on initial load it should be a fade.
+import { fade } from "astro:transitions";
 ---
 
-<div class="my-4 mb-8">
+<div class="my-4 mb-8" transition:animate="none">
     <div class="flex justify-center mb-2">
-        {prevPicture && <a id="prev-button" data-prev-picture={prevPicture} href={`/gallery/${prevPicture}`} class="mx-3 px-1 border-1 border-solid rounded-md"> ← </a>}
+        {prevPicture && <a id="prev-button" href={`/gallery/${prevPicture}`} data-astro-prefetch="load" data-astro-history="replace" class="mx-3 px-1 border-1 border-solid rounded-md"> ← </a>}
         {(nextPicture && prevPicture) && <span>|</span>}
-        {nextPicture && <a id="next-button" data-next-picture={nextPicture} href={`/gallery/${nextPicture}`} class="mx-3 px-1 border-1 border-solid rounded-md"> → </a>}
+        {nextPicture && <a id="next-button" href={`/gallery/${nextPicture}`} data-astro-prefetch="load" data-astro-history="replace" class="mx-3 px-1 border-1 border-solid rounded-md"> → </a>}
     </div>
     <Picture
+        transition:animate={fade({ duration: "0.4s" })} 
         src={getImageUrl("/" + currPicture)}
         alt="Sorry, I will work on getting alt text implemented. One step at a time."
         format="avif"
-        inferSize={true}
         quality={75}
+        inferSize={true}
         class="rounded-sm border border-transparent"
         decoding="async"
         loading="eager"
@@ -23,53 +27,59 @@ const { currPicture, prevPicture, nextPicture } = Astro.props;
 </div>
 
 <script>
-    const prevButtton = document.getElementById("prev-button");
-    const nextButton = document.getElementById("next-button");
+    import { navigate } from "astro:transitions/client";
+    
+    // Note: We run this JS on every page load. View transistions cause the JS to not load normally.
+    // Github Issue: https://github.com/withastro/astro/issues/7765#issuecomment-2155408334
+    document.addEventListener('astro:page-load', () => {
 
-    const handlePrevAction = () => {
-        const prevPicture = prevButtton?.dataset.prevPicture;
-        if (prevPicture) {
-            window.location.replace(`/gallery/${prevPicture}`);
-        }
-    }
-
-    const handleNextAction = () => {
-        const nextPicture = nextButton?.dataset.nextPicture;
-        if (nextPicture) {
-            window.location.replace(`/gallery/${nextPicture}`);
-        }
-    }
-
-    document.addEventListener("keydown", (event) => {
-        if (event.key === "ArrowLeft") {
-            handlePrevAction();
-        } else if (event.key === "ArrowRight") {
-            handleNextAction();
-        }
-    });
-
-    let touchstartX = 0, touchstartY = 0, touchendX = 0, touchendY = 0;
-    document.addEventListener('touchstart', (event) => {
-        touchstartX = event.changedTouches[0].screenX;
-        touchstartY = event.changedTouches[0].screenY;
-    }, false);
-
-    document.addEventListener('touchend', (event) => {
-        touchendX = event.changedTouches[0].screenX;
-        touchendY = event.changedTouches[0].screenY;
-        handleGesture();
-    }, false);
-
-    // TODO: This needs a little love it doesn't feel intuitive as a user to know that you can gesture here.
-    const handleGesture = () => {
-        // LEFT SWIPE
-        if (touchendX < touchstartX) {
-            handleNextAction();
+        const prevButtton = document.getElementById("prev-button");
+        const nextButton = document.getElementById("next-button");
+        const handlePrevAction = () => {
+            const href = prevButtton?.href;
+            if (href !== undefined) {
+                navigate(href, { history: "replace" });
+            }
         }
 
-        // RIGHT SWIPE
-        if (touchendX > touchstartX) {
-            handlePrevAction();
+        const handleNextAction = () => {
+            const href = nextButton?.href
+            if (href !== undefined) {
+                navigate(href, { history: "replace" });
+            }
         }
-    }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowLeft") {
+                handlePrevAction();
+            } else if (event.key === "ArrowRight") {
+                handleNextAction();
+            }
+        });
+
+        let touchstartX = 0, touchstartY = 0, touchendX = 0, touchendY = 0;
+        document.addEventListener('touchstart', (event) => {
+            touchstartX = event.changedTouches[0].screenX;
+            touchstartY = event.changedTouches[0].screenY;
+        }, false);
+
+        document.addEventListener('touchend', (event) => {
+            touchendX = event.changedTouches[0].screenX;
+            touchendY = event.changedTouches[0].screenY;
+            handleGesture();
+        }, false);
+
+        // TODO: This needs a little love it doesn't feel intuitive as a user to know that you can gesture here.
+        const handleGesture = () => {
+            // LEFT SWIPE
+            if (touchendX < touchstartX) {
+                handleNextAction();
+            }
+
+            // RIGHT SWIPE
+            if (touchendX > touchstartX) {
+                handlePrevAction();
+            }
+        }
+    })
 </script>
