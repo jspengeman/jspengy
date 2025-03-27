@@ -38,11 +38,11 @@ import { fade } from "astro:transitions";
         }
     </div>
     <Picture
-        transition:animate={fade({ duration: "0.2s" })}
+        transition:animate={fade({ duration: "0.3s" })}
         src={getImageUrl("/" + currPicture)}
         alt="Sorry, I will work on getting alt text implemented. One step at a time."
         format="avif"
-        quality={75}
+        quality={50}
         inferSize={true}
         class="rounded-sm border border-transparent"
         decoding="async"
