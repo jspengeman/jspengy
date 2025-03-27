@@ -13,6 +13,7 @@
     "@astrojs/sitemap": "^3.3.0",
     "@fontsource-variable/roboto": "^5.2.5",
     "@tailwindcss/vite": "^4.0.15",
+    "@unpic/astro": "^1.0.0",
     "astro": "^5.5.4",
     "tailwindcss": "^4.0.15"
   }
