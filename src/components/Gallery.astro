@@ -1,27 +1,31 @@
 ---
-import { Picture } from 'astro:assets';
+import { Picture } from "astro:assets";
 import { getAllImages } from "../utils/gallery";
 
 const images = await getAllImages();
 ---
 
-<!-- TODO: Our loading stratergy for above the fold should be eager and below should be lazy I am thinking -->
-<!-- TODO: I was using pb-4 but that messed up the border. mb-4 caused a layout issue. Going with that for now though. -->
+<!-- TODO: Our loading stratergy for above the fold should be eager and below should be lazy I am thinking --><!-- TODO: I was using pb-4 but that messed up the border. mb-4 caused a layout issue. Going with that for now though. -->
 <div class="my-2 mb-8" transition:animate="fade">
-  <div class="sm:columns-1 md:columns-2 lg:columns-3 xl:columns-3">
-    {images.map((image) => (
-      <a href={`/gallery/${image.fileName}`} data-astro-prefetch="hover">
-        <Picture
-          src={image.src}
-          alt="Sorry, I will work on getting alt text implemented. One step at a time."
-          format="avif"
-          inferSize={true}
-          quality={10}
-          class="rounded-sm mb-4 border border-transparent"
-          decoding="async"
-          loading="eager"
-        />
-      </a>
-    ))}
-  </div>
+    <div class="sm:columns-1 md:columns-2 lg:columns-3 xl:columns-3">
+        {
+            images.map((image) => (
+                <a
+                    href={`/gallery/${image.fileName}`}
+                    data-astro-prefetch="hover"
+                >
+                    <Picture
+                        src={image.src}
+                        alt="Sorry, I will work on getting alt text implemented. One step at a time."
+                        format="avif"
+                        inferSize={true}
+                        quality={10}
+                        class="rounded-sm mb-4 border border-transparent"
+                        decoding="async"
+                        loading="eager"
+                    />
+                </a>
+            ))
+        }
+    </div>
 </div>

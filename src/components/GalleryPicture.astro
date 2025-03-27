@@ -1,6 +1,6 @@
 ---
-import { Picture } from 'astro:assets';
-import { getImageUrl } from "../utils/gallery"
+import { Picture } from "astro:assets";
+import { getImageUrl } from "../utils/gallery";
 const { currPicture, prevPicture, nextPicture } = Astro.props;
 
 // TODO: I'd like to slide left and right on left and right arrow and then on initial load it should be a fade.
@@ -9,12 +9,36 @@ import { fade } from "astro:transitions";
 
 <div class="my-4 mb-8" transition:animate="none">
     <div class="flex justify-center mb-2">
-        {prevPicture && <a id="prev-button" href={`/gallery/${prevPicture}`} data-astro-prefetch="load" data-astro-history="replace" class="mx-3 px-1 border-1 border-solid rounded-md"> ← </a>}
-        {(nextPicture && prevPicture) && <span>|</span>}
-        {nextPicture && <a id="next-button" href={`/gallery/${nextPicture}`} data-astro-prefetch="load" data-astro-history="replace" class="mx-3 px-1 border-1 border-solid rounded-md"> → </a>}
+        {
+            prevPicture && (
+                <a
+                    id="prev-button"
+                    href={`/gallery/${prevPicture}`}
+                    data-astro-prefetch="load"
+                    data-astro-history="replace"
+                    class="mx-3 px-1 border-1 border-solid rounded-md"
+                >
+                    ←
+                </a>
+            )
+        }
+        {nextPicture && prevPicture && <span>|</span>}
+        {
+            nextPicture && (
+                <a
+                    id="next-button"
+                    href={`/gallery/${nextPicture}`}
+                    data-astro-prefetch="viewport"
+                    data-astro-history="replace"
+                    class="mx-3 px-1 border-1 border-solid rounded-md"
+                >
+                    →
+                </a>
+            )
+        }
     </div>
     <Picture
-        transition:animate={fade({ duration: "0.4s" })} 
+        transition:animate={fade({ duration: "0.4s" })}
         src={getImageUrl("/" + currPicture)}
         alt="Sorry, I will work on getting alt text implemented. One step at a time."
         format="avif"
@@ -28,48 +52,46 @@ import { fade } from "astro:transitions";
 
 <script>
     import { navigate } from "astro:transitions/client";
-    
-    // Note: We run this JS on every page load. View transistions cause the JS to not load normally.
-    // Github Issue: https://github.com/withastro/astro/issues/7765#issuecomment-2155408334
-    document.addEventListener('astro:page-load', () => {
 
-        const prevButtton = document.getElementById("prev-button");
-        const nextButton = document.getElementById("next-button");
+    const registerScript = () => {
+        const prevButtton = document.getElementById(
+            "prev-button"
+        ) as HTMLAnchorElement;
+        const nextButton = document.getElementById(
+            "next-button"
+        ) as HTMLAnchorElement;
+
+        const shouldRegister = () => {
+            return prevButtton !== undefined || nextButton !== undefined;
+        };
+
         const handlePrevAction = () => {
             const href = prevButtton?.href;
             if (href !== undefined) {
                 navigate(href, { history: "replace" });
             }
-        }
+        };
 
         const handleNextAction = () => {
-            const href = nextButton?.href
+            const href = nextButton?.href;
             if (href !== undefined) {
                 navigate(href, { history: "replace" });
             }
-        }
+        };
 
-        document.addEventListener("keydown", (event) => {
+        const onKeyDown = (event: KeyboardEvent) => {
             if (event.key === "ArrowLeft") {
                 handlePrevAction();
             } else if (event.key === "ArrowRight") {
                 handleNextAction();
             }
-        });
-
-        let touchstartX = 0, touchstartY = 0, touchendX = 0, touchendY = 0;
-        document.addEventListener('touchstart', (event) => {
-            touchstartX = event.changedTouches[0].screenX;
-            touchstartY = event.changedTouches[0].screenY;
-        }, false);
-
-        document.addEventListener('touchend', (event) => {
-            touchendX = event.changedTouches[0].screenX;
-            touchendY = event.changedTouches[0].screenY;
-            handleGesture();
-        }, false);
+        };
 
         // TODO: This needs a little love it doesn't feel intuitive as a user to know that you can gesture here.
+        let touchstartX = 0,
+            touchstartY = 0,
+            touchendX = 0,
+            touchendY = 0;
         const handleGesture = () => {
             // LEFT SWIPE
             if (touchendX < touchstartX) {
@@ -80,6 +102,44 @@ import { fade } from "astro:transitions";
             if (touchendX > touchstartX) {
                 handlePrevAction();
             }
+        };
+
+        const onTouchStart = (event: TouchEvent) => {
+            touchstartX = event.changedTouches[0].screenX;
+            touchstartY = event.changedTouches[0].screenY;
+        };
+
+        const onTouchEnd = (event: TouchEvent) => {
+            touchendX = event.changedTouches[0].screenX;
+            touchendY = event.changedTouches[0].screenY;
+            handleGesture();
+        };
+
+        if (shouldRegister()) {
+            document.addEventListener("keydown", onKeyDown);
+            document.addEventListener("touchstart", onTouchStart, false);
+            document.addEventListener("touchend", onTouchEnd, false);
+
+            // Truly awful dev experience but lovely user experience
+            document.addEventListener(
+                "astro:before-swap",
+                () => {
+                    document.removeEventListener("keydown", onKeyDown);
+                    document.removeEventListener(
+                        "touchstart",
+                        onTouchStart,
+                        false
+                    );
+                    document.removeEventListener("touchend", onTouchEnd, false);
+                },
+                { once: true }
+            );
         }
-    })
+    };
+
+    registerScript();
+
+    // Note: We run this JS on every page load. View transistions cause the JS to not load normally.
+    // Github Issue: https://github.com/withastro/astro/issues/7765#issuecomment-2155408334
+    document.addEventListener("astro:after-swap", registerScript);
 </script>
