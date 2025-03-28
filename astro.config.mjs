@@ -18,7 +18,9 @@ export default defineConfig({
         plugins: [tailwindcss()],
     },
 
-    adapter: netlify(),
+    adapter: netlify({
+        imageCDN: false,
+    }),
 
     image: {
         domains: ["ik.imagekit.io"],
