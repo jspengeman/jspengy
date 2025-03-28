@@ -47,7 +47,7 @@ export const getAllImages = async () => {
         const prev = i - 1;
         const next = i + 1;
         const src = getImageUrl(json[i].filePath);
-        const { height, width } = inferRemoteSize(src);
+        const { height, width } = await inferRemoteSize(src);
         const currResult = newImageModel(
             src,
             json[i].name,
