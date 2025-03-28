@@ -23,12 +23,27 @@ export default defineConfig({
     }),
 
     image: {
-        domains: ["ik.imagekit.io"],
+        // experimentalLayout: "responsive",
+        // domains: ["https://ik.imagekit.io/"],
+        remotePatterns: [
+            // remotePatterns: [{ protocol: "https" }],
+            {
+                protocol: "https",
+                hostname: "ik.imagekit.io",
+            },
+            {
+                pathname: ".netlify",
+            },
+        ],
         service: imageService({
             placeholder: "blurhash",
             layout: "fullWidth",
         }),
     },
+
+    // experimental: {
+    //     responsiveImages: true,
+    // },
 
     integrations: [sitemap()],
 });
