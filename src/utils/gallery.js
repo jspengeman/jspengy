@@ -1,14 +1,25 @@
+import { inferRemoteSize } from "astro:assets";
+
 const IMAGE_KIT_URL = "https://ik.imagekit.io/pmbw7zrkob";
 
 export const getImageUrl = (filePath) => {
     return `${IMAGE_KIT_URL}${filePath}`;
 };
 
-const newImageModel = (currResult, prevResult, nextResult) => ({
-    src: getImageUrl(currResult.filePath),
-    fileName: currResult.name,
+const newImageModel = (
+    src,
+    fileName,
+    prevResult,
+    nextResult,
+    height,
+    width
+) => ({
+    src: src,
+    fileName: fileName,
     prevFileName: prevResult?.name,
     nextFileName: nextResult?.name,
+    height,
+    width,
 });
 
 export const getAllImages = async () => {
@@ -35,10 +46,15 @@ export const getAllImages = async () => {
     for (let i = 0; i < json.length; i++) {
         const prev = i - 1;
         const next = i + 1;
+        const src = getImageUrl(json[i].filePath);
+        const { height, width } = inferRemoteSize(src);
         const currResult = newImageModel(
-            json[i],
+            src,
+            json[i].name,
             prev in json ? json[prev] : null,
-            next in json ? json[next] : null
+            next in json ? json[next] : null,
+            height,
+            width
         );
         results.push(currResult);
     }
