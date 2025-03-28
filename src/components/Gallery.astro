@@ -19,11 +19,11 @@ const images = await getAllImages();
                         alt="Sorry, I will work on getting alt text implemented. One step at a time."
                         format="avif"
                         inferSize={true}
+                        densities={[0.25, 0.5, 0.75, 1]}
                         quality={5}
                         class="rounded-sm mb-4 border border-transparent"
                         decoding="async"
                         loading="eager"
-                        priority={true}
                     />
                 </a>
             ))
