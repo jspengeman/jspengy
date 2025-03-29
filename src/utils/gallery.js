@@ -1,6 +1,11 @@
 import { inferRemoteSize } from "astro:assets";
 
+const CDN = "imagekit";
 const IMAGE_KIT_URL = "https://ik.imagekit.io/pmbw7zrkob";
+
+export const getImageOperations = (quality) => {
+    return { [CDN]: { q: quality } };
+};
 
 export const getImageUrl = (filePath) => {
     return `${IMAGE_KIT_URL}${filePath}`;
