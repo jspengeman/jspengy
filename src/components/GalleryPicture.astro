@@ -1,11 +1,8 @@
 ---
-import { Picture } from "astro:assets";
 import { Image } from "@unpic/astro";
+import { fade } from "astro:transitions";
 import { getImageUrl, getImageOperations } from "../utils/gallery";
 const { currPicture, prevPicture, nextPicture } = Astro.props;
-
-// TODO: I'd like to slide left and right on left and right arrow and then on initial load it should be a fade.
-import { fade } from "astro:transitions";
 ---
 
 <div class="my-4 mb-8 min-h-full" transition:animate="none">

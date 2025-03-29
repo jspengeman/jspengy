@@ -3,6 +3,28 @@ import { inferRemoteSize } from "astro:assets";
 const CDN = "imagekit";
 const IMAGE_KIT_URL = "https://ik.imagekit.io/pmbw7zrkob";
 
+// Just for local test data.
+const getStubImages = () => {
+    const urls = [
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+    ];
+    return urls.map((url) => ({
+        src: url,
+        fileName: crypto.randomUUID(),
+    }));
+};
+
 export const getImageOperations = (quality) => {
     return { [CDN]: { q: quality } };
 };
@@ -27,27 +49,6 @@ const newImageModel = (
     width,
 });
 
-const getStubImages = () => {
-    const urls = [
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-    ];
-    return urls.map((url) => ({
-        src: url,
-        fileName: crypto.randomUUID(),
-    }));
-};
-
 export const getAllImages = async () => {
     const token = import.meta.env.IMAGE_KIT_KEY;
 
@@ -66,16 +67,13 @@ export const getAllImages = async () => {
         throw new Error("Failed to search ImageKit. Failing build.");
     }
 
-    // const json = await response.json();
-
-    const json = getStubImages();
+    const json = await response.json();
 
     const results = [];
     for (let i = 0; i < json.length; i++) {
         const prev = i - 1;
         const next = i + 1;
-        // const src = getImageUrl(json[i].filePath);
-        const src = json[i].src;
+        const src = getImageUrl(json[i].filePath);
         const { height, width } = await inferRemoteSize(src);
         const currResult = newImageModel(
             src,

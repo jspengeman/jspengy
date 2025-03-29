@@ -2,24 +2,30 @@
 import github from "../assets/github.svg";
 ---
 
-<div>
-    <main>
-        <section>
-            <div id="container" class="my-4">
-                <div id="box1">
-                    <a href="/" data-astro-prefetch="hover">
-                        <h3 id="name">SPENGY</h3>
-                    </a>
+<header>
+    <div>
+        <main>
+            <section>
+                <div id="container" class="my-4">
+                    <div id="box1">
+                        <a href="/" data-astro-prefetch="hover">
+                            <h3 id="name">SPENGY</h3>
+                        </a>
+                    </div>
+                    <div id="box2">
+                        <a href="https://github.com/jspengeman/jspengy">
+                            <img
+                                id="github"
+                                src={github.src}
+                                alt="github logo"
+                            />
+                        </a>
+                    </div>
                 </div>
-                <div id="box2">
-                    <a href="https://github.com/jspengeman/jspengy">
-                        <img id="github" src={github.src} alt="github logo" />
-                    </a>
-                </div>
-            </div>
-        </section>
-    </main>
-</div>
+            </section>
+        </main>
+    </div>
+</header>
 
 <style>
     #container {
