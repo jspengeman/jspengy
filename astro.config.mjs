@@ -3,7 +3,6 @@ import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import netlify from "@astrojs/netlify";
 import sitemap from "@astrojs/sitemap";
-import { imageService } from "@unpic/astro/service";
 
 export default defineConfig({
     site: "https://spengy.com",
@@ -18,11 +17,12 @@ export default defineConfig({
     }),
 
     image: {
+        experimentalLayout: "responsive",
         remotePatterns: [{ protocol: "https" }],
-        service: imageService({
-            placeholder: "blurhash",
-            layout: "fullWidth",
-        }),
+    },
+
+    experimental: {
+        responsiveImages: true,
     },
 
     integrations: [sitemap()],

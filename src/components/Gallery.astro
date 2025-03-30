@@ -1,14 +1,12 @@
 ---
-import { Image } from "@unpic/astro";
-import { getAllImages, getImageOperations } from "../utils/gallery";
+import { Image } from "astro:assets";
+import { getAllImages } from "../utils/gallery";
 
 const images = await getAllImages();
 ---
 
 <div class="my-2 mb-8" transition:animate="fade">
-    <div
-        class="grid sm:columns-1 md:columns-2 lg:grid-cols-3 xl:grid-cols-3 gap-4"
-    >
+    <div class="sm:columns-1 md:columns-2 lg:columns-3 xl:columns-3">
         {
             images.map((image) => (
                 <div>
@@ -19,12 +17,12 @@ const images = await getAllImages();
                         <Image
                             src={image.src}
                             alt="Sorry, I will work on getting alt text implemented. One step at a time."
-                            class="h-auto max-w-full rounded-sm"
+                            class="mb-4 h-auto max-w-full rounded-sm"
                             decoding="sync"
                             loading="eager"
-                            placeholder="blurhash"
                             priority={true}
-                            operations={getImageOperations(1)}
+                            inferSize={true}
+                            quality={50}
                         />
                     </a>
                 </div>

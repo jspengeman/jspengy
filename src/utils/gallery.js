@@ -1,7 +1,7 @@
 import { inferRemoteSize } from "astro:assets";
 
 const CDN = "imagekit";
-const IMAGE_KIT_URL = "https://ik.imagekit.io/pmbw7zrkob";
+const IMAGE_KIT_URL = "https://ik.imagekit.io/ikmedia";
 
 // Just for local test data.
 const getStubImages = () => {
@@ -21,12 +21,9 @@ const getStubImages = () => {
     ];
     return urls.map((url) => ({
         src: url,
-        fileName: crypto.randomUUID(),
+        filePath: "/woman.jpg",
+        name: "woman.jpg",
     }));
-};
-
-export const getImageOperations = (quality) => {
-    return { [CDN]: { q: quality } };
 };
 
 export const getImageUrl = (filePath) => {
@@ -50,24 +47,25 @@ const newImageModel = (
 });
 
 export const getAllImages = async () => {
-    const token = import.meta.env.IMAGE_KIT_KEY;
+    // const token = import.meta.env.IMAGE_KIT_KEY;
 
-    const headers = {
-        Accept: "application/json",
-        Authorization: `Basic ${btoa(token)}`,
-    };
-    const query = "fileType=image&sort=ASC_CREATED";
-    const response = await fetch(`https://api.imagekit.io/v1/files?${query}`, {
-        method: "GET",
-        headers: headers,
-    });
+    // const headers = {
+    //     Accept: "application/json",
+    //     Authorization: `Basic ${btoa(token)}`,
+    // };
+    // const query = "fileType=image&sort=ASC_CREATED";
+    // const response = await fetch(`https://api.imagekit.io/v1/files?${query}`, {
+    //     method: "GET",
+    //     headers: headers,
+    // });
 
-    if (!response.ok) {
-        console.log("ImageKit response:", response);
-        throw new Error("Failed to search ImageKit. Failing build.");
-    }
+    // if (!response.ok) {
+    //     console.log("ImageKit response:", response);
+    //     throw new Error("Failed to search ImageKit. Failing build.");
+    // }
 
-    const json = await response.json();
+    // const json = await response.json();
+    const json = getStubImages();
 
     const results = [];
     for (let i = 0; i < json.length; i++) {

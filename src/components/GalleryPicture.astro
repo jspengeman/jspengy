@@ -1,7 +1,7 @@
 ---
-import { Image } from "@unpic/astro";
+import { Image } from "astro:assets";
 import { fade } from "astro:transitions";
-import { getImageUrl, getImageOperations } from "../utils/gallery";
+import { getImageUrl } from "../utils/gallery";
 const { currPicture, prevPicture, nextPicture } = Astro.props;
 ---
 
@@ -39,12 +39,12 @@ const { currPicture, prevPicture, nextPicture } = Astro.props;
         transition:animate={fade({ duration: "0.2s" })}
         src={getImageUrl("/" + currPicture)}
         alt="Sorry, I will work on getting alt text implemented. One step at a time."
-        class="rounded-sm mb-4 h-fit"
+        class="mb-4 h-auto max-w-full rounded-sm"
         decoding="sync"
         loading="eager"
-        placeholder="blurhash"
         priority={true}
-        operations={getImageOperations(50)}
+        inferSize={true}
+        quality={100}
     />
 </div>
 
