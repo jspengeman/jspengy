@@ -1,7 +1,7 @@
 import { encode } from "blurhash";
 import { inferRemoteSize } from "astro:assets";
 import { getPixels } from "@unpic/pixels";
-import { blurhashToDataUri } from "@unpic/placeholder";
+import { blurhashToImageCssObject } from "@unpic/placeholder";
 
 const IMAGE_KIT_URL = "https://ik.imagekit.io/ikmedia";
 
@@ -39,7 +39,8 @@ const newImageModel = (
     nextResult,
     height,
     width,
-    style
+    style,
+    loading
 ) => ({
     src: src,
     fileName: fileName,
@@ -49,6 +50,7 @@ const newImageModel = (
         height,
         width,
         style,
+        loading,
     },
 });
 
@@ -109,7 +111,8 @@ export const getAllImages = async () => {
             next in json ? json[next] : null,
             height,
             width,
-            style
+            style,
+            i < 6 ? "eager" : "lazy"
         );
         results.push(currResult);
     }

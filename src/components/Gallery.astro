@@ -3,23 +3,31 @@ import { Picture } from "astro:assets";
 import { getAllImages } from "../utils/gallery";
 
 const images = await getAllImages();
+
+import "photoswipe/style.css";
 ---
 
 <div class="my-2 mb-8" transition:animate="fade">
-    <div class="sm:columns-1 md:columns-2 lg:columns-3 xl:columns-3">
+    <div
+        id="photo-gallery"
+        class="sm:columns-1 md:columns-2 lg:columns-3 xl:columns-3"
+    >
         {
             images.map((image) => (
                 <div>
                     <a
                         href={`/gallery/${image.fileName}`}
                         data-astro-prefetch="hover"
+                        data-pswp-src={image.src}
+                        data-pswp-width={image.attributes.width}
+                        data-pswp-height={image.attributes.height}
                     >
                         <Picture
                             src={image.src}
                             alt="Sorry, I will work on getting alt text implemented. One step at a time."
                             class="mb-4 h-auto max-w-full rounded-sm"
                             decoding="sync"
-                            loading="eager"
+                            loading={image.attributes.loading}
                             inferSize={true}
                             quality={50}
                             style={image.attributes.style}
@@ -30,3 +38,37 @@ const images = await getAllImages();
         }
     </div>
 </div>
+
+<script>
+    import PhotoSwipeLightbox from "photoswipe/lightbox";
+    const gallery = document.getElementById("photo-gallery");
+    const shouldRegister = () => gallery !== undefined;
+
+    const registerScript = () => {
+        const lightbox = new PhotoSwipeLightbox({
+            gallery: "#photo-gallery",
+            children: "a",
+            pswpModule: () => import("photoswipe"),
+        });
+        lightbox.init();
+
+        lightbox.on("contentActivate", ({ content }) => {
+            const element = content.data.element as
+                | HTMLAnchorElement
+                | undefined;
+            window.history.replaceState(null, "", element?.href);
+        });
+
+        lightbox.on("close", () => {
+            window.history.replaceState(null, "", "/");
+        });
+    };
+
+    if (shouldRegister()) {
+        registerScript();
+
+        // Note: We run this JS on every page load. View transistions cause the JS to not load normally.
+        // Github Issue: https://github.com/withastro/astro/issues/7765#issuecomment-2155408334
+        document.addEventListener("astro:after-swap", registerScript);
+    }
+</script>
