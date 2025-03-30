@@ -1,31 +1,33 @@
 ---
-import GalleryPicture from '../../components/GalleryPicture.astro';
-import Layout from '../../layouts/Layout.astro';
-import { getAllImages } from '../../utils/gallery';
+import GalleryPicture from "../../components/GalleryPicture.astro";
+import Layout from "../../layouts/Layout.astro";
+import { getAllImages } from "../../utils/gallery";
 
 export async function getStaticPaths() {
-	const pictures = await getAllImages();
-	const paths = pictures.map(picture => ({
-		params: {
-			picture: picture.fileName
-		},
-		props: {
-			nextLink: picture.nextFileName,
-			prevLink: picture.prevFileName
-		}
-	}))
-	
-	return paths;
+    const pictures = await getAllImages();
+    const paths = pictures.map((picture) => ({
+        params: {
+            picture: picture.fileName,
+        },
+        props: {
+            style: picture.attributes.style,
+            nextLink: picture.nextFileName,
+            prevLink: picture.prevFileName,
+        },
+    }));
+
+    return paths;
 }
 
 const { picture } = Astro.params;
-const { nextLink, prevLink } = Astro.props;
+const { nextLink, prevLink, style } = Astro.props;
 ---
 
 <Layout>
-	<GalleryPicture 
-		currPicture={picture}
-		nextPicture={nextLink} 
-		prevPicture={prevLink}
-	/>
+    <GalleryPicture
+        currPicture={picture}
+        nextPicture={nextLink}
+        prevPicture={prevLink}
+        style={style}
+    />
 </Layout>

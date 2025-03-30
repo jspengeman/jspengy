@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import { Picture } from "astro:assets";
 import { getAllImages } from "../utils/gallery";
 
 const images = await getAllImages();
@@ -14,15 +14,15 @@ const images = await getAllImages();
                         href={`/gallery/${image.fileName}`}
                         data-astro-prefetch="hover"
                     >
-                        <Image
+                        <Picture
                             src={image.src}
                             alt="Sorry, I will work on getting alt text implemented. One step at a time."
                             class="mb-4 h-auto max-w-full rounded-sm"
                             decoding="sync"
                             loading="eager"
-                            priority={true}
                             inferSize={true}
                             quality={50}
+                            style={image.attributes.style}
                         />
                     </a>
                 </div>

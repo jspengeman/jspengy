@@ -1,8 +1,8 @@
 ---
-import { Image } from "astro:assets";
+import { Picture } from "astro:assets";
 import { fade } from "astro:transitions";
 import { getImageUrl } from "../utils/gallery";
-const { currPicture, prevPicture, nextPicture } = Astro.props;
+const { currPicture, prevPicture, nextPicture, style } = Astro.props;
 ---
 
 <div class="my-4 mb-8 min-h-full" transition:animate="none">
@@ -35,16 +35,17 @@ const { currPicture, prevPicture, nextPicture } = Astro.props;
             )
         }
     </div>
-    <Image
+    <Picture
         transition:animate={fade({ duration: "0.2s" })}
         src={getImageUrl("/" + currPicture)}
         alt="Sorry, I will work on getting alt text implemented. One step at a time."
-        class="mb-4 h-auto max-w-full rounded-sm"
+        class="mb-4 h-auto min-w-full rounded-sm"
         decoding="sync"
         loading="eager"
         priority={true}
         inferSize={true}
         quality={100}
+        style={style}
     />
 </div>
 

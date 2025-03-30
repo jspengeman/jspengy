@@ -1,6 +1,8 @@
+import { encode } from "blurhash";
 import { inferRemoteSize } from "astro:assets";
+import { getPixels } from "@unpic/pixels";
+import { blurhashToDataUri } from "@unpic/placeholder";
 
-const CDN = "imagekit";
 const IMAGE_KIT_URL = "https://ik.imagekit.io/ikmedia";
 
 // Just for local test data.
@@ -36,14 +38,40 @@ const newImageModel = (
     prevResult,
     nextResult,
     height,
-    width
+    width,
+    style
 ) => ({
     src: src,
     fileName: fileName,
     prevFileName: prevResult?.name,
     nextFileName: nextResult?.name,
-    height,
-    width,
+    attributes: {
+        height,
+        width,
+        style,
+    },
+});
+
+const memoizeAsync = (fn) => {
+    const cache = {};
+    return async (arg) => {
+        const cachedResult = cache[arg];
+        if (cachedResult) {
+            console.log("Cached build result used.");
+            return Promise.resolve(cachedResult);
+        }
+        const evaledResult = fn(arg);
+        cache[arg] = await evaledResult;
+        console.log("cache: ", cache);
+        return evaledResult;
+    };
+};
+
+const getImageStyle = memoizeAsync(async (src) => {
+    const imageData = await getPixels(src);
+    const data = Uint8ClampedArray.from(imageData.data);
+    const blurhash = encode(data, imageData.width, imageData.height, 4, 4);
+    return blurhashToImageCssObject(blurhash);
 });
 
 export const getAllImages = async () => {
@@ -73,13 +101,15 @@ export const getAllImages = async () => {
         const next = i + 1;
         const src = getImageUrl(json[i].filePath);
         const { height, width } = await inferRemoteSize(src);
+        const style = await getImageStyle(src);
         const currResult = newImageModel(
             src,
             json[i].name,
             prev in json ? json[prev] : null,
             next in json ? json[next] : null,
             height,
-            width
+            width,
+            style
         );
         results.push(currResult);
     }
