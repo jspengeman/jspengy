@@ -3,7 +3,7 @@ import { inferRemoteSize } from "astro:assets";
 import { getPixels } from "@unpic/pixels";
 import { blurhashToImageCssObject } from "@unpic/placeholder";
 
-const IMAGE_KIT_URL = "https://ik.imagekit.io/ikmedia";
+const IMAGE_KIT_URL = "https://ik.imagekit.io/pmbw7zrkob/";
 
 // Just for local test data.
 const getStubImages = () => {
@@ -77,25 +77,24 @@ const getImageStyle = memoizeAsync(async (src) => {
 });
 
 export const getAllImages = async () => {
-    // const token = import.meta.env.IMAGE_KIT_KEY;
+    const token = import.meta.env.IMAGE_KIT_KEY;
 
-    // const headers = {
-    //     Accept: "application/json",
-    //     Authorization: `Basic ${btoa(token)}`,
-    // };
-    // const query = "fileType=image&sort=ASC_CREATED";
-    // const response = await fetch(`https://api.imagekit.io/v1/files?${query}`, {
-    //     method: "GET",
-    //     headers: headers,
-    // });
+    const headers = {
+        Accept: "application/json",
+        Authorization: `Basic ${btoa(token)}`,
+    };
+    const query = "fileType=image&sort=ASC_CREATED";
+    const response = await fetch(`https://api.imagekit.io/v1/files?${query}`, {
+        method: "GET",
+        headers: headers,
+    });
 
-    // if (!response.ok) {
-    //     console.log("ImageKit response:", response);
-    //     throw new Error("Failed to search ImageKit. Failing build.");
-    // }
+    if (!response.ok) {
+        console.log("ImageKit response:", response);
+        throw new Error("Failed to search ImageKit. Failing build.");
+    }
 
-    // const json = await response.json();
-    const json = getStubImages();
+    const json = await response.json();
 
     const results = [];
     for (let i = 0; i < json.length; i++) {
