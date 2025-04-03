@@ -18,7 +18,6 @@ import "photoswipe/style.css";
                     <a
                         href={`/gallery/${image.fileName}`}
                         data-astro-prefetch="hover"
-                        data-pswp-src={image.src}
                         data-pswp-width={image.attributes.width}
                         data-pswp-height={image.attributes.height}
                     >
@@ -44,12 +43,30 @@ import "photoswipe/style.css";
     const gallery = document.getElementById("photo-gallery");
     const shouldRegister = () => gallery !== undefined;
 
+    const configureSourceSets = (gallery: HTMLElement | null) => {
+        const anchors = gallery?.getElementsByTagName("a") || [];
+        for (let i = 0; i < anchors.length; i++) {
+            const anchor = anchors[i];
+            const sources = anchor.getElementsByTagName("source");
+            if (sources !== null && sources.length > 0) {
+                // We can just KISS and take the first one for now. Although, if the implementation of Image changes this could change.
+                const source = sources[0];
+                anchor.setAttribute("data-pswp-srcset", source.srcset);
+            }
+        }
+    };
+
     const registerScript = () => {
         const lightbox = new PhotoSwipeLightbox({
             gallery: "#photo-gallery",
             children: "a",
             pswpModule: () => import("photoswipe"),
         });
+
+        // Note: we do this because if you just set the src on the anchor tag photoswipe will do two things we don't want
+        // It will hit ImageKit directly and it will not use reponsive images provided by the source set. This fixes that.
+        configureSourceSets(gallery);
+
         lightbox.init();
 
         lightbox.on("contentActivate", ({ content }) => {
