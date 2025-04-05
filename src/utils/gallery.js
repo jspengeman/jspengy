@@ -2,6 +2,7 @@ import { encode } from "blurhash";
 import { inferRemoteSize } from "astro:assets";
 import { getPixels } from "@unpic/pixels";
 import { blurhashToImageCssObject } from "@unpic/placeholder";
+import fs from "fs/promises";
 
 const IMAGE_KIT_URL = "https://ik.imagekit.io/pmbw7zrkob/";
 
@@ -54,22 +55,44 @@ const newImageModel = (
     },
 });
 
-const memoizeAsync = (fn) => {
-    const cache = {};
-    return async (arg) => {
-        const cachedResult = cache[arg];
-        if (cachedResult) {
-            console.log("Cached build result used.");
-            return Promise.resolve(cachedResult);
+const BLURHASH_CACHE_DIR = `${process.env.PWD}/.dist/.blurhash`;
+
+const blurhashFilePath = (fileName, updatedAt) =>
+    `${BLURHASH_CACHE_DIR}${fileName}_${updatedAt}.json`;
+
+const checkFileExists = (file) =>
+    fs
+        .access(file, fs.constants.F_OK)
+        .then(() => true)
+        .catch(() => false);
+
+const createCacheDirectory = async (cacheDirectory) => {
+    const exists = await checkFileExists(cacheDirectory);
+    if (exists) {
+        return BLURHASH_CACHE_DIR;
+    }
+    const result = await fs.mkdir(cacheDirectory, { recursive: true });
+    return result;
+};
+
+const memoizeToDisk = (getImageStyleFn) => {
+    return async (src, fileName, updatedAt) => {
+        const diskFilePath = blurhashFilePath(fileName, updatedAt);
+        const fileExists = await checkFileExists(diskFilePath);
+        if (fileExists) {
+            console.log("Read from cache: ", diskFilePath);
+            const file = await fs.readFile(diskFilePath, "utf8");
+            return JSON.parse(file);
         }
-        const evaledResult = fn(arg);
-        cache[arg] = await evaledResult;
-        console.log("cache: ", cache);
-        return evaledResult;
+        console.log("Not read from cache: ", diskFilePath);
+        const result = await getImageStyleFn(src);
+        return createCacheDirectory(BLURHASH_CACHE_DIR)
+            .then(() => fs.writeFile(diskFilePath, JSON.stringify(result)))
+            .then(() => result);
     };
 };
 
-const getImageStyle = memoizeAsync(async (src) => {
+const getImageStyle = memoizeToDisk(async (src) => {
     const imageData = await getPixels(src);
     const data = Uint8ClampedArray.from(imageData.data);
     const blurhash = encode(data, imageData.width, imageData.height, 4, 4);
@@ -100,12 +123,13 @@ export const getAllImages = async () => {
     for (let i = 0; i < json.length; i++) {
         const prev = i - 1;
         const next = i + 1;
-        const src = getImageUrl(json[i].filePath);
+        const { name, filePath, updatedAt } = json[i];
+        const src = getImageUrl(filePath);
         const { height, width } = await inferRemoteSize(src);
-        const style = await getImageStyle(src);
+        const style = await getImageStyle(src, filePath, updatedAt);
         const currResult = newImageModel(
             src,
-            json[i].name,
+            name,
             prev in json ? json[prev] : null,
             next in json ? json[next] : null,
             height,
