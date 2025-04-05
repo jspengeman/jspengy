@@ -1,2 +1,2 @@
 [[plugins]]
-    package = "./plugins/cache"
+    package = ".src/plugins/cache"
