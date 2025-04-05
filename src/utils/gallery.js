@@ -86,9 +86,10 @@ const memoizeToDisk = (getImageStyleFn) => {
         }
         console.log("Not read from cache: ", diskFilePath);
         const result = await getImageStyleFn(src);
-        return createCacheDirectory(BLURHASH_CACHE_DIR)
-            .then(() => fs.writeFile(diskFilePath, JSON.stringify(result)))
-            .then(() => result);
+        await createCacheDirectory(BLURHASH_CACHE_DIR);
+        await fs.writeFile(diskFilePath, JSON.stringify(result));
+        console.log("Wrote file to disk: ", diskFilePath);
+        return result;
     };
 };
 
