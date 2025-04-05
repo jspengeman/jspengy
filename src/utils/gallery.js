@@ -55,7 +55,7 @@ const newImageModel = (
     },
 });
 
-const BLURHASH_CACHE_DIR = `${process.env.PWD}/.dist/.blurhash`;
+export const BLURHASH_CACHE_DIR = `${process.env.PWD}/.dist/.blurhash`;
 
 const blurhashFilePath = (fileName, updatedAt) =>
     `${BLURHASH_CACHE_DIR}${fileName}_${updatedAt}.json`;
