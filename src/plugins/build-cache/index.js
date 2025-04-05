@@ -1,4 +1,4 @@
-import { BLURHASH_CACHE_DIR } from "../../utils/gallery";
+const BLURHASH_CACHE_DIR = `${process.env.PWD}/.dist/.blurhash`;
 
 export const onPreBuild = async function ({ utils }) {
     console.log(`Restoring from Netlify cache ${BLURHASH_CACHE_DIR}`);
