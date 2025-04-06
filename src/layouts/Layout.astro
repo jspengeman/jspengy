@@ -3,7 +3,6 @@ import { ClientRouter } from "astro:transitions";
 import Header from "./Header.astro";
 import Footer from "./Footer.astro";
 import "@fontsource/roboto/latin-100.css";
-import robotoWoff1 from "@fontsource/roboto/files/roboto-latin-100-normal.woff?url";
 import robotoWoff2 from "@fontsource/roboto/files/roboto-latin-100-normal.woff2?url";
 import "../styles/global.css";
 ---
@@ -11,13 +10,6 @@ import "../styles/global.css";
 <!doctype html>
 <html lang="en">
     <head>
-        <link
-            rel="preload"
-            as="font"
-            href={robotoWoff1}
-            type="font/woff"
-            crossorigin="anonymous"
-        />
         <link
             rel="preload"
             as="font"
