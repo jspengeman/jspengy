@@ -2,13 +2,29 @@
 import { ClientRouter } from "astro:transitions";
 import Header from "./Header.astro";
 import Footer from "./Footer.astro";
-import "@fontsource-variable/roboto";
+import "@fontsource/roboto/latin-100.css";
+import robotoWoff1 from "@fontsource/roboto/files/roboto-latin-100-normal.woff?url";
+import robotoWoff2 from "@fontsource/roboto/files/roboto-latin-100-normal.woff2?url";
 import "../styles/global.css";
 ---
 
 <!doctype html>
 <html lang="en">
     <head>
+        <link
+            rel="preload"
+            as="font"
+            href={robotoWoff1}
+            type="font/woff"
+            crossorigin="anonymous"
+        />
+        <link
+            rel="preload"
+            as="font"
+            href={robotoWoff2}
+            type="font/woff2"
+            crossorigin="anonymous"
+        />
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
         <link rel="sitemap" href="/sitemap-index.xml" />
@@ -38,7 +54,6 @@ import "../styles/global.css";
         height: 100%;
         color: #2d343b;
         background-color: #f3f2f2;
-        font-family: "Roboto Variable", sans-serif;
-        font-weight: 100;
+        font-family: "Roboto";
     }
 </style>
