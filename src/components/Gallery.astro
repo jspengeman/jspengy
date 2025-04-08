@@ -1,10 +1,10 @@
 ---
 import { Picture } from "astro:assets";
 import { getAllImages } from "../utils/gallery";
+import "photoswipe/style.css";
 
 const images = await getAllImages();
-
-import "photoswipe/style.css";
+const THUMBNAIL_QUALITY = 10;
 ---
 
 <div class="my-2 mb-8" transition:animate="fade">
@@ -20,6 +20,7 @@ import "photoswipe/style.css";
                         data-astro-prefetch="hover"
                         data-pswp-width={image.attributes.width}
                         data-pswp-height={image.attributes.height}
+                        data-quality={THUMBNAIL_QUALITY}
                     >
                         <Picture
                             src={image.src}
@@ -28,7 +29,7 @@ import "photoswipe/style.css";
                             decoding="sync"
                             loading={image.attributes.loading}
                             inferSize={true}
-                            quality={50}
+                            quality={THUMBNAIL_QUALITY}
                             style={image.attributes.style}
                         />
                     </a>
@@ -47,11 +48,18 @@ import "photoswipe/style.css";
         const anchors = gallery?.getElementsByTagName("a") || [];
         for (let i = 0; i < anchors.length; i++) {
             const anchor = anchors[i];
+            const quality = anchor.dataset.quality;
             const sources = anchor.getElementsByTagName("source");
             if (sources !== null && sources.length > 0) {
                 // We can just KISS and take the first one for now. Although, if the implementation of Image changes this could change.
                 const source = sources[0];
-                anchor.setAttribute("data-pswp-srcset", source.srcset);
+
+                // Tiny hack here. Lets just hope that &q= isn't somewhere else in this string.
+                const highQualitySourceSet = source.srcset.replaceAll(
+                    `&q=${quality}`,
+                    "&q=50"
+                );
+                anchor.setAttribute("data-pswp-srcset", highQualitySourceSet);
             }
         }
     };
