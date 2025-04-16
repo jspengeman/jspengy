@@ -1,17 +1,16 @@
 ---
 import { Picture } from "astro:assets";
 import { fade } from "astro:transitions";
-import { getImageUrl } from "../utils/gallery";
-const { currPicture, prevPicture, nextPicture, style } = Astro.props;
+const { currImage, nextImage, prevImage } = Astro.props;
 ---
 
 <div class="my-4 mb-8 min-h-full" transition:animate="none">
     <div class="flex justify-center mb-2">
         {
-            prevPicture && (
+            prevImage && (
                 <a
                     id="prev-button"
-                    href={`/gallery/${prevPicture}`}
+                    href={`/gallery/${prevImage.fileName}`}
                     data-astro-prefetch="load"
                     data-astro-history="replace"
                     class="mx-3 px-1 border-1 border-solid rounded-md"
@@ -20,12 +19,12 @@ const { currPicture, prevPicture, nextPicture, style } = Astro.props;
                 </a>
             )
         }
-        {nextPicture && prevPicture && <span>|</span>}
+        {nextImage && prevImage && <span>|</span>}
         {
-            nextPicture && (
+            nextImage && (
                 <a
                     id="next-button"
-                    href={`/gallery/${nextPicture}`}
+                    href={`/gallery/${nextImage.fileName}`}
                     data-astro-prefetch="viewport"
                     data-astro-history="replace"
                     class="mx-3 px-1 border-1 border-solid rounded-md"
@@ -37,7 +36,7 @@ const { currPicture, prevPicture, nextPicture, style } = Astro.props;
     </div>
     <Picture
         transition:animate={fade({ duration: "0.2s" })}
-        src={getImageUrl("/" + currPicture)}
+        src={currImage.src}
         alt="Sorry, I will work on getting alt text implemented. One step at a time."
         class="mb-4 h-auto min-w-full rounded-sm"
         decoding="sync"
@@ -45,7 +44,7 @@ const { currPicture, prevPicture, nextPicture, style } = Astro.props;
         priority={true}
         inferSize={true}
         quality={100}
-        style={style}
+        style={currImage.attributes.style}
     />
 </div>
 

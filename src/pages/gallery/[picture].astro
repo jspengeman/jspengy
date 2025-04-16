@@ -10,24 +10,21 @@ export async function getStaticPaths() {
             picture: picture.fileName,
         },
         props: {
-            style: picture.attributes.style,
-            nextLink: picture.nextFileName,
-            prevLink: picture.prevFileName,
+            currImage: picture,
+            nextImage: picture.nextImage,
+            prevImage: picture.prevImage,
         },
     }));
 
     return paths;
 }
-
-const { picture } = Astro.params;
-const { nextLink, prevLink, style } = Astro.props;
+const { currImage, nextImage, prevImage } = Astro.props;
 ---
 
 <Layout>
     <GalleryPicture
-        currPicture={picture}
-        nextPicture={nextLink}
-        prevPicture={prevLink}
-        style={style}
+        currImage={currImage}
+        nextImage={nextImage}
+        prevImage={prevImage}
     />
 </Layout>

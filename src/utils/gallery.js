@@ -2,12 +2,10 @@ import { encode } from "blurhash";
 import { inferRemoteSize } from "astro:assets";
 import { getPixels } from "@unpic/pixels";
 import { blurhashToImageCssObject } from "@unpic/placeholder";
-import fs from "fs/promises";
-
-const IMAGE_KIT_URL = "https://ik.imagekit.io/pmbw7zrkob/";
+import { memoizeToDisk } from "./cache";
 
 // Just for local test data.
-const getStubImages = () => {
+const getStubImages = async () => {
     const urls = [
         "https://ik.imagekit.io/ikmedia/woman.jpg",
         "https://ik.imagekit.io/ikmedia/woman.jpg",
@@ -22,31 +20,19 @@ const getStubImages = () => {
         "https://ik.imagekit.io/ikmedia/woman.jpg",
         "https://ik.imagekit.io/ikmedia/woman.jpg",
     ];
-    return urls.map((url) => ({
-        src: url,
-        filePath: "/woman.jpg",
-        name: "woman.jpg",
-    }));
+    return Promise.resolve(
+        urls.map((url) => ({
+            url: url,
+            filePath: "/woman.jpg",
+            updatedAt: 0,
+            name: "woman.jpg",
+        }))
+    );
 };
 
-export const getImageUrl = (filePath) => {
-    return `${IMAGE_KIT_URL}${filePath}`;
-};
-
-const newImageModel = (
+const newImage = (src, fileName, height, width, style, loading) => ({
     src,
     fileName,
-    prevResult,
-    nextResult,
-    height,
-    width,
-    style,
-    loading
-) => ({
-    src: src,
-    fileName: fileName,
-    prevFileName: prevResult?.name,
-    nextFileName: nextResult?.name,
     attributes: {
         height,
         width,
@@ -55,42 +41,13 @@ const newImageModel = (
     },
 });
 
-export const BLURHASH_CACHE_DIR = `${process.env.PWD}/.dist/.blurhash`;
-
-const blurhashFilePath = (fileName, updatedAt) =>
-    `${BLURHASH_CACHE_DIR}${fileName}_${updatedAt}.json`;
-
-const checkFileExists = (file) =>
-    fs
-        .access(file, fs.constants.F_OK)
-        .then(() => true)
-        .catch(() => false);
-
-const createCacheDirectory = async (cacheDirectory) => {
-    const exists = await checkFileExists(cacheDirectory);
-    if (exists) {
-        return BLURHASH_CACHE_DIR;
-    }
-    const result = await fs.mkdir(cacheDirectory, { recursive: true });
-    return result;
-};
-
-const memoizeToDisk = (getImageStyleFn) => {
-    return async (src, fileName, updatedAt) => {
-        const diskFilePath = blurhashFilePath(fileName, updatedAt);
-        const fileExists = await checkFileExists(diskFilePath);
-        if (fileExists) {
-            console.log("Read from cache: ", diskFilePath);
-            const file = await fs.readFile(diskFilePath, "utf8");
-            return JSON.parse(file);
-        }
-        console.log("Not read from cache: ", diskFilePath);
-        const result = await getImageStyleFn(src);
-        await createCacheDirectory(BLURHASH_CACHE_DIR);
-        await fs.writeFile(diskFilePath, JSON.stringify(result));
-        console.log("Wrote file to disk: ", diskFilePath);
-        return result;
-    };
+const relateImages = (currImage, nextImage, prevImage) => {
+    return Object.assign(
+        {},
+        { ...currImage },
+        { nextImage: nextImage },
+        { prevImage: prevImage }
+    );
 };
 
 const getImageStyle = memoizeToDisk(async (src) => {
@@ -100,7 +57,7 @@ const getImageStyle = memoizeToDisk(async (src) => {
     return blurhashToImageCssObject(blurhash);
 });
 
-export const getAllImages = async () => {
+const searchForImages = async () => {
     const token = import.meta.env.IMAGE_KIT_KEY;
 
     const headers = {
@@ -118,25 +75,29 @@ export const getAllImages = async () => {
         throw new Error("Failed to search ImageKit. Failing build.");
     }
 
-    const json = await response.json();
+    return response.json();
+};
+
+export const getAllImages = async () => {
+    const json = await searchForImages();
+
+    const images = [];
+    for (let i = 0; i < json.length; i++) {
+        const { url, name, filePath, updatedAt } = json[i];
+        const style = await getImageStyle(url, filePath, updatedAt);
+        const { height, width } = await inferRemoteSize(url);
+        const loading = i < 6 ? "eager" : "lazy";
+        images.push(newImage(url, name, height, width, style, loading));
+    }
 
     const results = [];
-    for (let i = 0; i < json.length; i++) {
+    for (let i = 0; i < images.length; i++) {
         const prev = i - 1;
         const next = i + 1;
-        const { name, filePath, updatedAt } = json[i];
-        const src = getImageUrl(filePath);
-        const { height, width } = await inferRemoteSize(src);
-        const style = await getImageStyle(src, filePath, updatedAt);
-        const currResult = newImageModel(
-            src,
-            name,
-            prev in json ? json[prev] : null,
-            next in json ? json[next] : null,
-            height,
-            width,
-            style,
-            i < 6 ? "eager" : "lazy"
+        const currResult = relateImages(
+            images[i],
+            prev in images ? images[prev] : null,
+            next in images ? images[next] : null
         );
         results.push(currResult);
     }
