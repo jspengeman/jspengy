@@ -30,14 +30,14 @@ const getStubImages = async () => {
     );
 };
 
-const getHighQualitySrcSet = async (image) => {
+const getSrcSet = async (image, widths, quality) => {
     const optimizedImage = await getImage({
         src: image.src,
         format: "webp",
         height: image.attributes.height,
         width: image.attributes.width,
-        widths: [320, 480, 640, 768, 1024, 1280, 1920, 2560],
-        quality: 50,
+        widths: widths,
+        quality: quality,
     });
     return optimizedImage.srcSet.attribute;
 };
@@ -50,10 +50,16 @@ const newImage = async (src, fileName, height, width, style, loading) => ({
         width,
         style,
         loading,
-        hqsrcset: await getHighQualitySrcSet({
-            src,
-            attributes: { height, width },
-        }),
+        hqsrcset: await getSrcSet(
+            { src, attributes: { height, width } },
+            [320, 480, 640, 768, 1024, 1280, 1920, 2560],
+            50
+        ),
+        lqsrcset: await getSrcSet(
+            { src, attributes: { height, width } },
+            [320, 480, 640, 768],
+            25
+        ),
     },
 });
 
@@ -95,7 +101,7 @@ const searchForImages = async () => {
 };
 
 export const getAllImages = async () => {
-    const json = await searchForImages();
+    const json = await getStubImages();
 
     const images = [];
     for (let i = 0; i < json.length; i++) {

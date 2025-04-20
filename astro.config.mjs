@@ -12,18 +12,18 @@ export default defineConfig({
         plugins: [tailwindcss()],
     },
 
-    adapter: netlify({
-        imageCDN: true,
-    }),
+    // adapter: netlify({
+    //     imageCDN: true,
+    // }),
 
     image: {
-        experimentalLayout: "responsive",
+        // experimentalLayout: "responsive",
         remotePatterns: [{ protocol: "https" }],
     },
 
-    experimental: {
-        responsiveImages: true,
-    },
+    // experimental: {
+    //     responsiveImages: true,
+    // },
 
     integrations: [sitemap()],
 });

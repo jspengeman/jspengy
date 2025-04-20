@@ -1,5 +1,5 @@
 ---
-import { Picture } from "astro:assets";
+import { Image } from "astro:assets";
 import { getAllImages } from "../utils/gallery";
 import "photoswipe/style.css";
 
@@ -22,8 +22,9 @@ const THUMBNAIL_QUALITY = 20;
                         data-pswp-width={image.attributes.width}
                         data-pswp-height={image.attributes.height}
                     >
-                        <Picture
+                        <Image
                             src={image.src}
+                            srcset={image.attributes.lqsrcset}
                             alt="Sorry, I will work on getting alt text implemented. One step at a time."
                             class="mb-4 h-auto max-w-full rounded-sm"
                             decoding="sync"
@@ -32,7 +33,6 @@ const THUMBNAIL_QUALITY = 20;
                             width={image.attributes.width}
                             quality={THUMBNAIL_QUALITY}
                             style={image.attributes.style}
-                            widths={[320, 480, 640, 768]}
                             sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                         />
                     </a>
