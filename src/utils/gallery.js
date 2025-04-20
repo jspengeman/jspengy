@@ -33,6 +33,7 @@ const getStubImages = async () => {
 const getHighQualitySrcSet = async (image) => {
     const optimizedImage = await getImage({
         src: image.src,
+        format: "webp",
         height: image.attributes.height,
         width: image.attributes.width,
         widths: [320, 480, 640, 768, 1024, 1280, 1920, 2560],
