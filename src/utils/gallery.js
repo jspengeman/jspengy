@@ -1,5 +1,5 @@
 import { encode } from "blurhash";
-import { inferRemoteSize } from "astro:assets";
+import { inferRemoteSize, getImage } from "astro:assets";
 import { getPixels } from "@unpic/pixels";
 import { blurhashToImageCssObject } from "@unpic/placeholder";
 import { memoizeToDisk } from "./cache";
@@ -30,7 +30,18 @@ const getStubImages = async () => {
     );
 };
 
-const newImage = (src, fileName, height, width, style, loading) => ({
+const getHighQualitySrcSet = async (image) => {
+    const optimizedImage = await getImage({
+        src: image.src,
+        height: image.attributes.height,
+        width: image.attributes.width,
+        widths: [320, 480, 640, 768, 1024, 1280, 1920, 2560],
+        quality: 50,
+    });
+    return optimizedImage.srcSet.attribute;
+};
+
+const newImage = async (src, fileName, height, width, style, loading) => ({
     src,
     fileName,
     attributes: {
@@ -38,6 +49,10 @@ const newImage = (src, fileName, height, width, style, loading) => ({
         width,
         style,
         loading,
+        hqsrcset: await getHighQualitySrcSet({
+            src,
+            attributes: { height, width },
+        }),
     },
 });
 
@@ -87,7 +102,7 @@ export const getAllImages = async () => {
         const style = await getImageStyle(url, filePath, updatedAt);
         const { height, width } = await inferRemoteSize(url);
         const loading = i < 6 ? "eager" : "lazy";
-        images.push(newImage(url, name, height, width, style, loading));
+        images.push(await newImage(url, name, height, width, style, loading));
     }
 
     const results = [];

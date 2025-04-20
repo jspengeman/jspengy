@@ -4,7 +4,7 @@ import { getAllImages } from "../utils/gallery";
 import "photoswipe/style.css";
 
 const images = await getAllImages();
-const THUMBNAIL_QUALITY = 10;
+const THUMBNAIL_QUALITY = 20;
 ---
 
 <div class="my-2 mb-8" transition:animate="fade">
@@ -18,9 +18,9 @@ const THUMBNAIL_QUALITY = 10;
                     <a
                         href={`/gallery/${image.fileName}`}
                         data-astro-prefetch="hover"
+                        data-pswp-srcset={image.attributes.hqsrcset}
                         data-pswp-width={image.attributes.width}
                         data-pswp-height={image.attributes.height}
-                        data-quality={THUMBNAIL_QUALITY}
                     >
                         <Picture
                             src={image.src}
@@ -28,9 +28,12 @@ const THUMBNAIL_QUALITY = 10;
                             class="mb-4 h-auto max-w-full rounded-sm"
                             decoding="sync"
                             loading={image.attributes.loading}
-                            inferSize={true}
+                            height={image.attributes.height}
+                            width={image.attributes.width}
                             quality={THUMBNAIL_QUALITY}
                             style={image.attributes.style}
+                            widths={[320, 480, 640, 768]}
+                            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                         />
                     </a>
                 </div>
@@ -44,36 +47,12 @@ const THUMBNAIL_QUALITY = 10;
     const gallery = document.getElementById("photo-gallery");
     const shouldRegister = () => gallery !== undefined;
 
-    const configureSourceSets = (gallery: HTMLElement | null) => {
-        const anchors = gallery?.getElementsByTagName("a") || [];
-        for (let i = 0; i < anchors.length; i++) {
-            const anchor = anchors[i];
-            const quality = anchor.dataset.quality;
-            const sources = anchor.getElementsByTagName("source");
-            if (sources !== null && sources.length > 0) {
-                // We can just KISS and take the first one for now. Although, if the implementation of Image changes this could change.
-                const source = sources[0];
-
-                // Tiny hack here. Lets just hope that &q= isn't somewhere else in this string.
-                const highQualitySourceSet = source.srcset.replaceAll(
-                    `&q=${quality}`,
-                    "&q=50"
-                );
-                anchor.setAttribute("data-pswp-srcset", highQualitySourceSet);
-            }
-        }
-    };
-
     const registerScript = () => {
         const lightbox = new PhotoSwipeLightbox({
             gallery: "#photo-gallery",
             children: "a",
             pswpModule: () => import("photoswipe"),
         });
-
-        // Note: we do this because if you just set the src on the anchor tag photoswipe will do two things we don't want
-        // It will hit ImageKit directly and it will not use reponsive images provided by the source set. This fixes that.
-        configureSourceSets(gallery);
 
         lightbox.init();
 
