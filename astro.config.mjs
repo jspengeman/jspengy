@@ -17,13 +17,13 @@ export default defineConfig({
     // }),
 
     image: {
-        // experimentalLayout: "responsive",
+        experimentalLayout: "responsive",
         remotePatterns: [{ protocol: "https" }],
     },
 
-    // experimental: {
-    //     responsiveImages: true,
-    // },
+    experimental: {
+        responsiveImages: true,
+    },
 
     integrations: [sitemap()],
 });
