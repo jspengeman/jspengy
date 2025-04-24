@@ -58,7 +58,7 @@ const newImage = async (src, fileName, height, width, style, loading) => ({
         lqsrcset: await getSrcSet(
             { src, attributes: { height, width } },
             [320, 480, 640, 768],
-            25
+            50
         ),
     },
 });

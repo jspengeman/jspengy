@@ -2,7 +2,7 @@
 import { ClientRouter } from "astro:transitions";
 import Header from "./Header.astro";
 import Footer from "./Footer.astro";
-import "@fontsource/roboto/latin-100.css";
+import "@fontsource/roboto/100.css";
 import robotoWoff2 from "@fontsource/roboto/files/roboto-latin-100-normal.woff2?url";
 import "../styles/global.css";
 ---
@@ -15,7 +15,7 @@ import "../styles/global.css";
             as="font"
             href={robotoWoff2}
             type="font/woff2"
-            crossorigin="anonymous"
+            crossorigin
         />
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
@@ -47,5 +47,6 @@ import "../styles/global.css";
         color: #2d343b;
         background-color: #f3f2f2;
         font-family: "Roboto";
+        font-weight: 100;
     }
 </style>
