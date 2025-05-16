@@ -104,7 +104,7 @@ export const getAllImages = async () => {
     const json = await searchForImages();
 
     const images = [];
-    for (let i = 0; i < json.length; i++) {
+    for (let i = 0; i < 25; i++) {
         const { url, name, filePath, updatedAt } = json[i];
         const style = await getImageStyle(url, filePath, updatedAt);
         const { height, width } = await inferRemoteSize(url);
