@@ -7,13 +7,17 @@ import { memoizeToDisk } from "./cache";
 // Just for local test data.
 const getStubImages = async () => {
     const urls = [
+        "https://ik.imagekit.io/demo/tr:f-jpg/medium_cafe_B1iTdD0C.jpg",
+        "https://ik.imagekit.io/demo/tr:f-jpg/medium_cafe_B1iTdD0C.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/demo/tr:f-jpg/medium_cafe_B1iTdD0C.jpg",
         "https://ik.imagekit.io/ikmedia/woman.jpg",
         "https://ik.imagekit.io/ikmedia/woman.jpg",
         "https://ik.imagekit.io/ikmedia/woman.jpg",
         "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
-        "https://ik.imagekit.io/ikmedia/woman.jpg",
+        "https://ik.imagekit.io/demo/tr:f-jpg/medium_cafe_B1iTdD0C.jpg",
         "https://ik.imagekit.io/ikmedia/woman.jpg",
         "https://ik.imagekit.io/ikmedia/woman.jpg",
         "https://ik.imagekit.io/ikmedia/woman.jpg",
@@ -104,7 +108,7 @@ export const getAllImages = async () => {
     const json = await searchForImages();
 
     const images = [];
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 50; i++) {
         const { url, name, filePath, updatedAt } = json[i];
         const style = await getImageStyle(url, filePath, updatedAt);
         const { height, width } = await inferRemoteSize(url);
