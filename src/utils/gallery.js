@@ -97,7 +97,7 @@ const searchForImages = async () => {
         throw new Error("Failed to search ImageKit. Failing build.");
     }
 
-    return response.json().slice(0, 25);
+    return response.json();
 };
 
 export const getAllImages = async () => {
@@ -124,5 +124,5 @@ export const getAllImages = async () => {
         results.push(currResult);
     }
 
-    return results;
+    return results.slice(0, 25);
 };
