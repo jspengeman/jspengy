@@ -86,7 +86,7 @@ const searchForImages = async () => {
         Accept: "application/json",
         Authorization: `Basic ${btoa(token)}`,
     };
-    const query = "fileType=image&sort=ASC_CREATED";
+    const query = "fileType=image&sort=DESC_CREATED";
     const response = await fetch(`https://api.imagekit.io/v1/files?${query}`, {
         method: "GET",
         headers: headers,
