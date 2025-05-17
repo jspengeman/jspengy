@@ -18,7 +18,11 @@
     "@unpic/placeholder": "^0.1.2",
     "astro": "^5.5.4",
     "blurhash": "^2.0.5",
+    "minimasonry": "^1.3.2",
     "photoswipe": "^5.4.4",
     "tailwindcss": "^4.0.15"
+  },
+  "devDependencies": {
+    "@types/minimasonry": "^1.3.5"
   }
 }

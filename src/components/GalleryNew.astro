@@ -1,0 +1,103 @@
+---
+import { Image } from "astro:assets";
+import { getAllImages } from "../utils/gallery";
+import "photoswipe/style.css";
+
+const images = await getAllImages();
+const THUMBNAIL_QUALITY = 20;
+---
+
+<div class="my-2 mb-8" transition:animate="fade">
+    <div id="photo-gallery" class="gallery-container">
+        {
+            images.map((image) => (
+                <a
+                    href={`/gallery/${image.fileName}`}
+                    class="gallery-item"
+                    data-astro-prefetch="hover"
+                    data-pswp-srcset={image.attributes.hqsrcset}
+                    data-pswp-width={image.attributes.width}
+                    data-pswp-height={image.attributes.height}
+                >
+                    <Image
+                        src={image.src}
+                        srcset={image.attributes.lqsrcset}
+                        alt="Sorry, I will work on getting alt text implemented. One step at a time."
+                        decoding="sync"
+                        loading={image.attributes.loading}
+                        height={image.attributes.height}
+                        width={image.attributes.width}
+                        quality={THUMBNAIL_QUALITY}
+                        style={image.attributes.style}
+                        class="rounded-sm"
+                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    />
+                </a>
+            ))
+        }
+    </div>
+</div>
+
+<style>
+    .gallery-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .gallery-item {
+        position: absolute;
+        display: block;
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+</style>
+
+<script>
+    import PhotoSwipeLightbox from "photoswipe/lightbox";
+    import MiniMasonry from "minimasonry";
+
+    const gallery = document.getElementById("photo-gallery");
+    const shouldRegister = () => gallery !== undefined;
+
+    const registerScript = () => {
+        const masonry = new MiniMasonry({
+            container: "#photo-gallery",
+            baseWidth: Math.min(350, window.innerWidth - 32),
+            gutter: 16,
+            surroundingGutter: false,
+            minify: false,
+        });
+        masonry.layout();
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallery: "#photo-gallery",
+            children: "a",
+            pswpModule: () => import("photoswipe"),
+        });
+
+        lightbox.init();
+
+        lightbox.on("contentActivate", ({ content }) => {
+            const element = content.data.element as
+                | HTMLAnchorElement
+                | undefined;
+            window.history.replaceState(null, "", element?.href);
+        });
+
+        lightbox.on("close", () => {
+            window.history.replaceState(null, "", "/");
+        });
+    };
+
+    if (shouldRegister()) {
+        registerScript();
+
+        // Note: We run this JS on every page load. View transistions cause the JS to not load normally.
+        // Github Issue: https://github.com/withastro/astro/issues/7765#issuecomment-2155408334
+        document.addEventListener("astro:after-swap", registerScript);
+    }
+</script>
