@@ -8,46 +8,110 @@ const THUMBNAIL_QUALITY = 20;
 ---
 
 <div class="my-2 mb-8" transition:animate="fade">
-    <div
-        id="photo-gallery"
-        class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-x-4"
-    >
+    <div id="photo-gallery" class="gallery-container">
         {
             images.map((image) => (
-                <div>
-                    <a
-                        href={`/gallery/${image.fileName}`}
-                        data-astro-prefetch="hover"
-                        data-pswp-srcset={image.attributes.hqsrcset}
-                        data-pswp-width={image.attributes.width}
-                        data-pswp-height={image.attributes.height}
-                    >
-                        <Image
-                            src={image.src}
-                            srcset={image.attributes.lqsrcset}
-                            alt="Sorry, I will work on getting alt text implemented. One step at a time."
-                            class="mb-4 h-auto max-w-full rounded-sm"
-                            decoding="sync"
-                            loading={image.attributes.loading}
-                            height={image.attributes.height}
-                            width={image.attributes.width}
-                            quality={THUMBNAIL_QUALITY}
-                            style={image.attributes.style}
-                            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                        />
-                    </a>
-                </div>
+                <a
+                    href={`/gallery/${image.fileName}`}
+                    class="gallery-item"
+                    data-astro-prefetch="hover"
+                    data-pswp-srcset={image.attributes.hqsrcset}
+                    data-pswp-width={image.attributes.width}
+                    data-pswp-height={image.attributes.height}
+                >
+                    <Image
+                        src={image.src}
+                        srcset={image.attributes.lqsrcset}
+                        alt="Sorry, I will work on getting alt text implemented. One step at a time."
+                        decoding="sync"
+                        loading={image.attributes.loading}
+                        height={image.attributes.height}
+                        width={image.attributes.width}
+                        quality={THUMBNAIL_QUALITY}
+                        style={image.attributes.style}
+                        class="rounded-sm"
+                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    />
+                </a>
             ))
         }
     </div>
 </div>
 
+<style>
+    .gallery-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .gallery-item {
+        position: absolute;
+        display: block;
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+</style>
+
 <script>
     import PhotoSwipeLightbox from "photoswipe/lightbox";
+    import MiniMasonry from "minimasonry";
+
     const gallery = document.getElementById("photo-gallery");
     const shouldRegister = () => gallery !== undefined;
 
     const registerScript = () => {
+        let resizeTimeout: NodeJS.Timeout | null = null;
+        let masonry: MiniMasonry | null = null;
+
+        const createMasonry = () => {
+            masonry = new MiniMasonry({
+                container: "#photo-gallery",
+                baseWidth: Math.min(350, window.innerWidth - 32),
+                gutter: 16,
+                surroundingGutter: false,
+                minify: true,
+            });
+        };
+
+        const layoutMasonry = () => {
+            if (masonry !== null) {
+                masonry.layout();
+            }
+        };
+
+        const createAndLayoutMasonry = () => {
+            createMasonry();
+            layoutMasonry();
+        };
+
+        createAndLayoutMasonry();
+
+        const getImages = (): HTMLImageElement[] => {
+            if (gallery === null) return [];
+            return Array.from(gallery.getElementsByTagName("img"));
+        };
+
+        const images = getImages();
+        Array.from(images).forEach((img) => {
+            img.addEventListener("load", () => {
+                layoutMasonry();
+            });
+        });
+
+        // Debounced resize handler
+        window.addEventListener("resize", () => {
+            if (resizeTimeout !== null) {
+                clearTimeout(resizeTimeout);
+            }
+            resizeTimeout = setTimeout(() => {
+                createMasonry();
+            }, 100);
+        });
+
         const lightbox = new PhotoSwipeLightbox({
             gallery: "#photo-gallery",
             children: "a",

@@ -105,7 +105,7 @@ const searchForImages = async () => {
 };
 
 export const getAllImages = async () => {
-    const json = await searchForImages();
+    const json = await getStubImages();
 
     const images = [];
     for (let i = 0; i < json.length; i++) {
