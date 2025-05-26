@@ -102,16 +102,6 @@ const THUMBNAIL_QUALITY = 20;
             });
         });
 
-        // Debounced resize handler
-        window.addEventListener("resize", () => {
-            if (resizeTimeout !== null) {
-                clearTimeout(resizeTimeout);
-            }
-            resizeTimeout = setTimeout(() => {
-                createMasonry();
-            }, 100);
-        });
-
         const lightbox = new PhotoSwipeLightbox({
             gallery: "#photo-gallery",
             children: "a",
