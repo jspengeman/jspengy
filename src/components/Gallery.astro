@@ -83,12 +83,9 @@ const THUMBNAIL_QUALITY = 20;
             }
         };
 
-        const createAndLayoutMasonry = () => {
-            if (masonry === null) {
-                createMasonry();
-            }
-            layoutMasonry();
-        };
+        // Reminder: we first create the masonry layout then later we layout on each
+        // image load to ensure the images do not load on top of each other initially.
+        createMasonry();
 
         const getImages = (): HTMLImageElement[] => {
             if (gallery === null) return [];
@@ -96,21 +93,20 @@ const THUMBNAIL_QUALITY = 20;
         };
 
         const images = getImages();
-
-        let loadedImages = 0;
-        const onImageLoad = () => {
-            loadedImages++;
-            // if (loadedImages === images.length) {
-            createAndLayoutMasonry();
-            // }
-        };
-
         Array.from(images).forEach((img) => {
-            if (img.complete) {
-                onImageLoad();
-            } else {
-                img.addEventListener("load", onImageLoad);
+            img.addEventListener("load", () => {
+                layoutMasonry();
+            });
+        });
+
+        // Debounced resize handler
+        window.addEventListener("resize", () => {
+            if (resizeTimeout !== null) {
+                clearTimeout(resizeTimeout);
             }
+            resizeTimeout = setTimeout(() => {
+                createMasonry();
+            }, 100);
         });
 
         const lightbox = new PhotoSwipeLightbox({
