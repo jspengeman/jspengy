@@ -83,12 +83,9 @@ const THUMBNAIL_QUALITY = 20;
             }
         };
 
-        const createAndLayoutMasonry = () => {
-            createMasonry();
-            layoutMasonry();
-        };
-
-        createAndLayoutMasonry();
+        // Reminder: we first create the masonry layout then later we layout on each
+        // image load to ensure the images do not load on top of each other initially.
+        createMasonry();
 
         const getImages = (): HTMLImageElement[] => {
             if (gallery === null) return [];
