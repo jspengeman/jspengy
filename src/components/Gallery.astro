@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import { getAllImages } from "../utils/gallery";
 import "photoswipe/style.css";
+import "lazysizes";
 
 const images = await getAllImages();
 const THUMBNAIL_QUALITY = 20;
@@ -29,7 +30,7 @@ const THUMBNAIL_QUALITY = 20;
                         width={image.attributes.width}
                         quality={THUMBNAIL_QUALITY}
                         style={image.attributes.style}
-                        class="rounded-sm"
+                        class="rounded-sm lazyload"
                         sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                     />
                 </a>
