@@ -77,7 +77,8 @@ const relateImages = (currImage, nextImage, prevImage) => {
 };
 
 const getImageStyle = memoizeToDisk(async (src) => {
-    const imageData = await getPixels(src);
+    const lowQualitySrc = src + "&tr=f-jpeg,q-5"
+    const imageData = await getPixels(lowQualitySrc);
     const data = Uint8ClampedArray.from(imageData.data);
     const blurhash = encode(data, imageData.width, imageData.height, 4, 4);
     return blurhashToImageCssObject(blurhash);
